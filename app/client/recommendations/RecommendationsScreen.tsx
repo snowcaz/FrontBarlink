@@ -16,9 +16,6 @@ const barImages = [
   'https://th.bing.com/th/id/OIP.rUAKIMhwM3IZGfX-Z0RbKwHaE8?rs=1&pid=ImgDetMain',
   'https://i.pinimg.com/originals/c8/fe/47/c8fe474ba451f04e28bada1d4c5bb162.jpg',
   'https://cdn.forbes.com.mx/2023/10/pexels-rachel-claire-5490965.webp'
-
-
-
 ];
 
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
