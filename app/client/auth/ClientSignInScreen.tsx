@@ -8,8 +8,6 @@ import Logo from '../../../assets/images/Logo_2.png';
 import ClientCustomInput from '../../../components/CustomInput/ClientCustomInput';
 import ClientCustomButton from '../../../components/CustomButton/ClientCustomButton';
 import { API_URL } from '@env';
-import { BACKEND_URL } from '@env';
-
 
 const { width } = Dimensions.get('window');
 
@@ -52,7 +50,7 @@ const ClientSignInScreen: React.FC = () => {
     try {
       const response = await axios.post(`${API_URL}/api/login`, {
         email: username,
-        password
+        password,
       });
 
       if (response.status === 200) {

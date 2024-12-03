@@ -19,10 +19,8 @@ const BarAdminScreen: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
-  const [showRoleOptions, setShowRoleOptions] = useState(false);
+
   const adminBarId = 1; // Simulando bar_id para el inicio de sesion del admin
-  const [selectedRole, setSelectedRole] = useState('Mesero');
-  const roles = ['Mesero', 'Barra', 'Cocina', 'Administrador'];
 
   useEffect(() => {
     fetchProducts();
@@ -44,7 +42,7 @@ const BarAdminScreen: React.FC = () => {
     setNewProduct(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleAddEmployee = () => {
+  const handleAddProduct = () => {
     if (isValidProduct(newProduct)) {
       confirmAction(
         'Confirmar Adición',
@@ -147,49 +145,12 @@ const BarAdminScreen: React.FC = () => {
       }
     );
   };
-  const toggleRoleOptions = () => {
-    setShowRoleOptions(!showRoleOptions);
-  };
-
-  const selectRole = (role: string) => {
-    setSelectedRole(role);
-    setShowRoleOptions(false);
-  };
-
-
-  const renderEmployeeForm = () => (
-    <View style={styles.addProductForm}>
-      <TextInput
-        style={styles.input}
-        placeholder="Email del Usuario"
-        value={newProduct.name}
-        onChangeText={(text) => handleInputChange('name', text)}
-      />
-      <TouchableOpacity onPress={toggleRoleOptions} style={styles.roleSelector}>
-            <Text style={styles.roleSelectorText}>{selectedRole}</Text>
-            <Ionicons name={showRoleOptions ? "chevron-up" : "chevron-down"} size={24} color="#8D99AE" />
-          </TouchableOpacity>
-          {showRoleOptions && (
-            <View style={styles.roleOptions}>
-              {roles.map((role) => (
-                <TouchableOpacity key={role} onPress={() => selectRole(role)} style={styles.roleOption}>
-                  <Text style={styles.roleOptionText}>{role}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-      <TouchableOpacity onPress={handleAddProduct} style={styles.addButton}>
-        <Text style={styles.addButtonText}>Agregar Trabajador</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
 
   const renderProductForm = () => (
     <View style={styles.addProductForm}>
       <TextInput
         style={styles.input}
-        placeholder="Nombre del productos"
+        placeholder="Nombre del producto"
         value={newProduct.name}
         onChangeText={(text) => handleInputChange('name', text)}
       />
@@ -287,7 +248,7 @@ const BarAdminScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Gestión de Bar</Text>
+        <Text style={styles.headerText}>Gestión de Productos</Text>
         <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
           <Ionicons name="exit-outline" size={24} color="#fff" />
         </TouchableOpacity>
@@ -295,8 +256,6 @@ const BarAdminScreen: React.FC = () => {
 
       <ScrollView>
         <View style={styles.content}>
-          {renderEmployeeForm()}
-
           {renderProductForm()}
 
           <View style={styles.productList}>
@@ -365,36 +324,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   categoryButton: {
-    backgroundColor: '#2B2D42',
+    backgroundColor: '#8D99AE',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
     marginBottom: 10,
   },
   categoryButtonActive: {
-    backgroundColor: '#2B2D42'
+    backgroundColor: '#2B2D42',
   },
   categoryButtonText: {
     color: 'white',
     fontWeight: 'bold',
-  },
-  userTypeButtonText: {
-    color: '#2B2D42',
-    fontWeight: 'bold',
-  },
-  userTypeButton: {
-    backgroundColor: '#ffff',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#2B2D42"
-  },
-  userTypeButtonActive: {
-    backgroundColor: '#ffff',
-    borderWidth: 1,
-    borderColor: "#2B2D42"
   },
   addButton: {
     backgroundColor: '#2B2D42',
@@ -470,36 +411,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  roleSelector: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#8D99AE',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
-  roleSelectorText: {
-    fontSize: 16,
-    color: '#2B2D42',
-  },
-  roleOptions: {
-    borderWidth: 1,
-    borderColor: '#8D99AE',
-    borderRadius: 5,
-    marginTop: -10,
-    marginBottom: 10,
-  },
-  roleOption: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#8D99AE',
-  },
-  roleOptionText: {
-    fontSize: 16,
-    color: '#2B2D42',
   },
 });
 
