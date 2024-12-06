@@ -7,13 +7,13 @@ import axios from 'axios';
 import { API_URL } from '@env';
 import ClientHeader from '../../../../components/ClientHeader/ClientHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import io from 'socket.io-client';  
+import io from 'socket.io-client';
 
 const socket = io(API_URL);  // Conectar al servidor Socket.IO
 
 const BarDetailsScreen: React.FC = () => {
   const router = useRouter();
-  const { bar_id, table_id, user_id, clearCart } = useLocalSearchParams();
+  const { bar_id, table_id, user_id, orderTotal_id, creator_user_id, clearCart } = useLocalSearchParams();
   const [products, setProducts] = useState<any[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [total, setTotal] = useState<number>(0);
@@ -135,23 +135,38 @@ const BarDetailsScreen: React.FC = () => {
         table_id,
         bar_id,
         special_notes: "", // Opcional
-        orderGroup_id: null
+        orderGroup_id: null,
+        orderTotal_id
       };
 
       console.log('Datos enviados:', newOrder);
-      console.log('Endpoint llamado:', `${API_URL}/api/orders`);
+      // console.log('Endpoint llamado:', `${API_URL}/api/orders`);
 
       try {
         // Enviar datos al backend
         const response = await axios.post(`${API_URL}/api/orders`, newOrder);
         console.log('Orden creada exitosamente:', response.data);
 
-        // Emitir el evento para notificar a la barra (o cocina)
-        socket.emit('new_order', {
-          tableNumber: table_id,
-          items: selectedProducts.map((product) => product.name).join(', '),
-          total: total,
-        });
+    // Emitir notificación para la barra
+    const drinks = selectedProducts.filter(product => product.category === 'Drink');
+    if (drinks.length > 0) {
+      socket.emit('new_order_bar', {
+        tableNumber: table_id,
+        items: drinks.map(product => product.name),
+        total: total,
+      });
+    }
+
+    // Emitir notificación para la cocina
+    const foods = selectedProducts.filter(product => product.category === 'Food');
+    if (foods.length > 0) {
+      socket.emit('new_order_kitchen', {
+        tableNumber: table_id,
+        items: foods.map(product => product.name),
+        total: total,
+      });
+    }
+
 
         // Guardar la orden localmente
         const updatedExistingOrders = [
@@ -167,10 +182,13 @@ const BarDetailsScreen: React.FC = () => {
 
         // Redirigir a la pantalla de resumen del pedido
         const productsString = JSON.stringify(updatedExistingOrders);
+        console.log('creator_user_id: ', creator_user_id);
         router.push({
           pathname: `/client/bar-details/${bar_id}/OrderSummaryScreen`,
-          params: { products: productsString, table_id, bar_id, user_id },
+          // params: { products: productsString, table_id, bar_id, user_id },
+          params: { products: JSON.stringify(updatedExistingOrders), table_id, bar_id, user_id, orderTotal_id, creator_user_id },
         });
+
 
         // Resetear cantidades y total
         const resetQuantities = {};
